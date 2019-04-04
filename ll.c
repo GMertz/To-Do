@@ -1,0 +1,85 @@
+#include "ll.h"/*for ll struct and methods*/
+#include "util.h"/*for: error*/
+#include <stdlib.h>/*for: malloc, free*/
+#include <string.h>/*for: strncpy*/
+#include <stdio.h>/*for: FILE */
+
+void print_ll(ll_node_t head)
+{
+	do {
+		printf("%s\n",head.val);
+		head = *head.next;
+	}
+	while(head.next);
+	printf("%s",head.val);
+}
+
+void push(ll_node_t** head, const char* str)//works
+{
+	if (!*head) *head = new_node(str);
+	else{
+		ll_node_t *node = *head;
+		while (node->next) node=node->next;
+		node->next = new_node(str);
+	}
+}
+
+
+void add(ll_node_t* head, unsigned int ind, const char * str)//works
+{
+	ll_node_t * prev = 0;
+	ll_node_t *node = head;
+	while(ind)
+	{
+		prev = node;
+		node = node->next;
+		ind--;
+
+		if(!node && ind) error("invalid ind");
+	}
+
+	if(prev){
+		prev->next = new_node(str);
+		prev->next->next = node;
+	}
+	else{
+		ll_node_t * temp = new_node(head->val);
+		temp->next = head->next;
+		strcpy(head->val,str);
+		head->next = temp;
+	}
+}
+
+char * remove_head(ll_node_t** head)
+{
+	if(!head) error("removal underflow");
+	
+	ll_node_t * next = (*head)->next;
+	free((*head)->val);
+	free(*head);
+	*head = next;
+}
+
+ll_node_t* arr_to_ll(const char** arr, int len)//works
+{
+	ll_node_t * head = new_node(arr[0]);
+	ll_node_t * temp = head;
+	for (int i = 1; i < len; ++i)
+	{
+		temp->next = new_node(arr[i]);
+		temp = temp->next;
+	}
+	return head;
+}
+
+ll_node_t* new_node(const char* val)//works
+{
+	ll_node_t * newn = malloc(sizeof(ll_node_t));
+	int len = 0;
+	while(val[len++]);
+	char * copy = malloc(len);
+	strncpy(copy,val,len);
+	newn->val = copy;
+	newn->next = 0;
+	return newn;
+}
