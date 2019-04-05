@@ -10,7 +10,8 @@ typedef struct ll_node_t
 void print_ll(ll_node_t head);
 void push(ll_node_t** head, const char* str);
 void add(ll_node_t* head, unsigned int ind, const char * str);
-char * remove_head(ll_node_t** head);
+void remove_head(ll_node_t** head);
+char * rem_at(ll_node_t** head, unsigned int ind);
 ll_node_t* arr_to_ll(const char** arr, int len);
 ll_node_t* new_node(const char* val);
 

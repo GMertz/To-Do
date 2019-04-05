@@ -5,17 +5,20 @@
 
 int main(int argv, const char **argc)
 {
-	if(argv > 1)
+
+	ll_node_t * args = arr_to_ll(&argc[1], argv-1);
+	int num;
+	char * str;
+	switch(get_params(args,&str,&num))
 	{
-		ll_node_t * args = arr_to_ll(&argc[1], argv-1);
-		push(&args, "woops");
-		push(&args, "woops1");
-		push(&args, "woops2");
-		push(&args, "woops3");
-		push(&args, "woops4");
-		push(&args, "woops5");
-		serialize_todos(*args,concat(GLOBALPATH,"thisisatest.txt"));
+		case 1:
+			printf("%s %d\n",str,num);
+			break;
+		case 2:
+			printf("%s %d\n",str,num);
+			break;
+		default:
+			printf("no params\n");
+		//serialize_todos(*args,concat(FILESDIR,"thisisatest.txt"));
 	}
-
-
 }

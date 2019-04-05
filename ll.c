@@ -11,7 +11,7 @@ void print_ll(ll_node_t head)
 		head = *head.next;
 	}
 	while(head.next);
-	printf("%s",head.val);
+	printf("%s\n",head.val);
 }
 
 void push(ll_node_t** head, const char* str)//works
@@ -50,7 +50,8 @@ void add(ll_node_t* head, unsigned int ind, const char * str)//works
 	}
 }
 
-char * remove_head(ll_node_t** head)
+//removes and discards(frees) head of ll
+void remove_head(ll_node_t** head)
 {
 	if(!head) error("removal underflow");
 	
@@ -58,6 +59,27 @@ char * remove_head(ll_node_t** head)
 	free((*head)->val);
 	free(*head);
 	*head = next;
+}
+
+char * rem_at(ll_node_t** head, unsigned int ind)//works
+{
+	ll_node_t * prev = 0;
+	ll_node_t *node = *head;
+	while(ind)
+	{
+		prev = node;
+		node = node->next;
+		ind--;
+
+		if(!node && ind) error("invalid ind");
+	}
+	char * val = node->val;
+	ll_node_t * temp = node->next;
+	free(node);
+	if (!prev) *head = temp;
+	else prev->next = temp;
+
+	return val;
 }
 
 ll_node_t* arr_to_ll(const char** arr, int len)//works

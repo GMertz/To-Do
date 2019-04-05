@@ -84,7 +84,7 @@ int caseless_cmp(const char * a, const char * b)//works
 	while (*a && *b)
 	{
 		int dif = *a - *b;
-		if(dif != 32 && dif != 0 && dif != -32) return 0;
+		if (dif != 32 && dif != 0 && dif != -32) return 0;
 		a++;
 		b++;
 	}
@@ -97,54 +97,44 @@ int is_number(const char * str, int * num)//works
 	i = ret = neg = 0;
 	char c;
 
-	if(str[0] == '-') 
+	if (str[0] == '-') 
 	{
 		neg = 1;
 		i++;
 	}
 	while(c = str[i])
 	{
-		if(c < '0' || c > '9') return 0;
+		if (c < '0' || c > '9') return 0;
 		ret = ret*10 + c -'0';
+		if (ret > MAXTODOS) return 0;
 		i++;
 	}
 
 	*num = neg ? -ret : ret;
-	printf("num:%d\n",num );
 	return 1;
 }
 
-int is_string(const char * str)//works
-{
-	int i = 0;
-	char c;
-	while(c = str[i]){
-		if((c < 'A' || c > 'Z') && (c < 'a' || c > 'z'))
-			return 0;
-		i++;
-	}
-	printf("%s is valid\n",str);
-	return 1;
-
-}
-
-FILE * get_open_file(char * file_name, char * mode)
+FILE * get_open_file(char * file_name)
 {
 	FILE *fp = fopen(file_name,"r+");
-	if(!fp) fp = fopen(file_name,"w+");
+	if (!fp) fp = fopen(file_name,"w+");
 
 	return fp;
 }
 
-void serialize_todos(ll_node_t todos, char* file_name)
+void serialize_todos(ll_node_t todos, char* file_name)//works
 {
-	printf("%s\n",file_name );
-	return;
 	FILE *fp = fopen(file_name, "w");
-	while(todos.next)
+
+	if (!fp) error(concat("could not open file: ",file_name));
+
+	int i = 0;
+	while (todos.next && i < MAXTODOS)
 	{
 		fputs(todos.val,fp);
 		fputc('\n',fp);
+		todos = *(todos.next);
+		i++;
 	}
 
 	fputs(todos.val,fp);

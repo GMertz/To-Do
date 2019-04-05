@@ -1,18 +1,16 @@
 #include "commands.h"
 #include "ll.h"
-#include "util.h"/*for:get_open_file */
+#include "util.h"/*for: get_open_file */
+#include "todo.h"
 #include <stdio.h>
 
 //prints todos
 int todo(ll_node_t * head, char * file_name)//works
 {
-	// printf("doing TODO!\n");
-	// return OK;
-
-	FILE *fp = get_open_file(file_name,"r");
 	int i = 0;
-	ll_node_t * todos;
-	if(fp && (todos = get_todos(fp)))
+	ll_node_t * todos = 0;
+
+	if(todos = get_todos(file_name))
 	{
 		while(todos)
 		{
@@ -22,47 +20,58 @@ int todo(ll_node_t * head, char * file_name)//works
 		}
 	}
 	else{
-		fclose(fp);
 		error("No todos to print");
 	}
 
-	fclose(fp);
 	return OK;
 }
 
 //add a todo
 int add_todo(ll_node_t * head, char * file_name)
 {
-	// printf("doing ADD_TODO!\n");
-	// return OK;
+	int ind; 
+	char *message = 0;
+	
+	ll_node_t * todos = get_todos(file_name);
 
-	FILE *fp = get_open_file(file_name,"r+");
-
-	int ind; char* message;
-	switch(get_params(head, &message,&ind))
+	switch(get_params(head, &message, &ind))
 	{
-		case 1:
-			get_todos(fp);
-			break;
 		case 2:
-			get_todos(fp);
+			push(&todos, message);
+			break;
+		case 3:
+			add(todos,ind, message);
 			break;
 		default:
-			fclose(fp);
 			error("nothing to add!");
 	}
 
-	fclose(fp);
+	printf("%s added!",message);
+
+	serialize_todos(*todos, file_name);
 	return OK;
 }
 
 //remove a todo
 int rem(ll_node_t * head, char * file_name)
 {
-	// printf("doing REM!\n");
-	// return OK;
+	int ind; 
+	ll_node_t * todos = get_todos(file_name);
 
-	FILE *fp = get_open_file(file_name,"r+");
+	switch(get_params(head, 0, &ind))
+	{
+		case 1:
+			printf("%s removed!",rem_at(&todos, ind));
+			break;
+		case 3:
+			printf("%s removed!",rem_at(&todos, ind));
+			break;
+		default:
+			error("nothing to remove!");
+	}
+	
+	serialize_todos(*todos, file_name);
+	return OK;
 }
 
 //update a todo
@@ -71,7 +80,7 @@ int update(ll_node_t * head, char * file_name)
 	// printf("doing update!\n");
 	// return OK;
 
-	FILE *fp = get_open_file(file_name,"r+");
+	ll_node_t * todos = get_todos(file_name);
 }
 
 //open the todo file for opening
@@ -80,7 +89,7 @@ int edit(ll_node_t * head, char * file_name)
 	// printf("doing edit!\n");
 	// return OK;
 
-	FILE *fp = get_open_file(file_name,"r+");
+	ll_node_t * todos = get_todos(file_name);
 }
 
 
@@ -90,7 +99,7 @@ int done(ll_node_t * head, char * file_name)
 	// printf("doing done!\n");
 	// return OK;
 
-	FILE *fp = get_open_file(file_name,"r+");
+	ll_node_t * todos = get_todos(file_name);
 }
 
 //show finished todos
@@ -99,5 +108,5 @@ int show(ll_node_t * head, char * file_name)
 	// printf("doing show!\n");
 	// return OK;
 
-	FILE *fp = get_open_file(file_name,"r+");
+	ll_node_t * todos = get_todos(file_name);
 }

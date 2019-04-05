@@ -37,7 +37,6 @@ int main(int argv, const char **argc)
 		//need to encode paths
 
 		int command_code = get_command(&args);
-		printf("%d\n", command_code);
 		COMM[command_code](args,file_name);
 	}
 }

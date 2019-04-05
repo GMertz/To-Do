@@ -1,7 +1,7 @@
 #include "todo.h"
 #include <stdio.h>
 #include <string.h>/*for:strcmp*/
-
+#include <stdlib.h>
 #include "ll.h" /*for: ll struct and methods*/
 #include "util.h" /*for:MAXLINELEN*/
 #include "commands.h" /*for:Command_Names, NUMCOMMANDS*/
@@ -35,8 +35,10 @@ enum
 /*-- input: pathname, 
 	 returns: len of dest,
 	 dest = list of tods  --*/
-ll_node_t * get_todos(FILE * fp)//works
+ll_node_t *get_todos(char *file_name)//works
 {
+	FILE *fp = get_open_file(file_name);
+
 	int lines, chrs;
 	chrs = lines = 0;
 
@@ -58,7 +60,7 @@ ll_node_t * get_todos(FILE * fp)//works
 		if(chrs) 
 		{
 			lines++;
-			line[chrs+1] = 0;
+			line[chrs] = 0;
 			push(&ret,line);//can be optimized
 		}
 	}
@@ -116,24 +118,30 @@ int get_command(ll_node_t** head)
 int get_params(ll_node_t* args, char ** str, int * num)
 {
 	//check if a given arg contains chars or nums
-	char flag = 0;
-	int i = 0, ret;
-	ll_node_t * node = args;
-	while(node)
+	int params = 0;
+	int num_param;
+	char * build_str = 0, *temp = 0;
+
+	if (is_number(args->val,&num_param))
 	{
-		if(!(flag&1) && is_number(args->val, &ret))
-		{
-			flag |= 1;
-			*num = ret;
-			printf("got number: %d\n",ret);
-		}
-		else if(!(flag&2) && is_string(args->val))
-		{
-			flag |= 2;
-			(*str) = args->val;
-		}
-		node = node->next;
-		i++;
+		*num = num_param;
+		remove_head(&args);
+	 	params |= 1;
 	}
-	return flag;
+	if(args)
+	{
+		params |= 2;
+		build_str = rem_at(&args,0);
+		while(args)
+		{
+			build_str = concat(build_str, " ");
+			temp = rem_at(&args,0);
+	
+			build_str = concat(build_str, temp);
+			free(temp);
+		}
+
+		*str = build_str;
+	}
+	return params;
 }
