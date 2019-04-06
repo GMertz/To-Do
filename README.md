@@ -22,5 +22,5 @@ All commands can be prefaced by 'g' or 'G' to indicate the scope of the command 
 ## To use this
 1. Have gcc installed
 1. Clone repository
-2. Run: run.bat
+2. Run: \source\setup.exe
 3. Add path to todo.exe to PATH
