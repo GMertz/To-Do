@@ -76,11 +76,10 @@ void fix_it(char ** path)
 int compile(char *path)
 {
 	fix_it(&path); 
-	system("cd ..\\source");
-	char *command = concat("gcc driver.c commands.c ll.c todo.c util.c -o todo.exe -DGLOBALPATH=\\\"",path);
+	char *command = concat("gcc ..\\source\\driver.c ..\\source\\commands.c ..\\source\\ll.c ..\\source\\todo.c ..\\source\\util.c -o todo.exe -DGLOBALPATH=\\\"",path);
 	command = concat(command,"\\\"");
+	
 	system(command);
-	system("mv todo.exe ..\\bin");
 	printf("finished!\n");
 	return 1;
 }
