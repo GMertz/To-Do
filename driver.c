@@ -4,7 +4,7 @@
 #include "commands.h"/*for: todo, add_todo, rem, update, edit, done, show */
 
 
-int (*const COMM[NUMCOMMANDS])(ll_node_t*, char*) = 
+void (*const COMM[NUMCOMMANDS])(ll_node_t*, const char*) = 
 {
 	todo,
 	add_todo,
@@ -15,28 +15,18 @@ int (*const COMM[NUMCOMMANDS])(ll_node_t*, char*) =
 	show
 };
 
-//tod
-//tod {g} add # do this thing 
-//tod remove #
-//tod update # new todo
-//tod edit 
-//tod done #
-//tod show
-
-
 int main(int argv, const char **argc)
 {
-	if(argv == 1) COMM[0](0,GLOBALPATH);
+	if(argv == 1) COMM[0](0,get_local_path());
 	else
 	{
 		ll_node_t* args = arr_to_ll(&argc[1], argv-1);
-		char* file_name;
+		char* path_name;
 
-		if(get_flag(&args) == GLOBAL) file_name = GLOBALPATH;
-		else file_name = GLOBALPATH;//file_name = concat(FILESDIR, concat(get_dir_name(),FILEEXT));
-		//need to encode paths
+		if (get_flag(&args) == GLOBAL) path_name = GLOBALPATH;
+		else path_name = get_local_path();
 
 		int command_code = get_command(&args);
-		COMM[command_code](args,file_name);
+		COMM[command_code](args,path_name);
 	}
 }

@@ -8,6 +8,6 @@ ll_node_t * get_todos(char * file_name);
 int get_flag(ll_node_t** head);
 int get_command(ll_node_t** head);
 int get_params(ll_node_t* args, char ** str, int * num);
-void serialize_todos(ll_node_t todos, char* file_name);
+void serialize_todos(ll_node_t *todos, char* file_name);
 
 #endif

@@ -1,16 +1,8 @@
 #include "util.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include "commands.h"
-
-
-/*void  unary_commands[] = {};
-(void*) binary_commands[] = {};*/
-//how to do array of fnction pointer?
-
+#include <stdio.h>/*for: printf, FILE, fopen*/
+#include <string.h>/*for: strncpy, strlen*/
+#include <stdlib.h>/*for: malloc*/
+#include <unistd.h>/*for: getcwd*/
 
 
 void error(char* str)
@@ -24,56 +16,55 @@ void safe_exit()
 	exit(0);
 }
 
-char* concat(char * source, char * addend)//works
+char *concat(const char * source, const char * addend)//works
 {
 	int len_s, len_a;
 	len_s = len_a = 0;
 
-	while(source[++len_s]);//len- '\0'
-	while(addend[len_a++]);//len
+	len_s = strlen(source);
+	len_a = strlen(addend);
 
-	char * ret = malloc(len_s + len_a);
+	char * ret = malloc(len_s + len_a+1);
 
 	strncpy(ret,source,len_s);//copy source to ret
-	strncpy(&ret[len_s],addend,len_a);//copy addend
+	strncpy(&ret[len_s],addend,len_a+1);//copy addend
+
 	return ret;
 }
 
-char * get_dir_name()//works
+char *substr(const char * source, int start, int end)
 {
-	char buf[MAXPATHLEN], c;
-	int len = 0, end, dif;
+	int len = strlen(source), size = end-start;
 
-	getcwd(buf,MAXPATHLEN);
+	if(size > len || start < 0 || end > len-1 || size < 0)
+		return 0;
 
-	while(buf[++len]);
+	char *substr = malloc(size+1);
 
-	end = len;
-
-	while(buf[--end] != '\\');
-
-	dif = len-end;
-
-	char * ret = malloc(dif);
-
-	end++;
-
-	for (int i = 0; i < dif; i++){
-		ret[i] = buf[end+i];
+	for (int i = 0; i < size; ++i)
+	{
+		substr[i] = source[start+i];
 	}
 
-	ret[dif-1] = 0;
-	return ret;
+	substr[size] = 0;
+	return substr;
+}
+
+char * get_local_path()//works
+{
+	char buf[MAXPATHLEN];
+
+	getcwd(buf,MAXPATHLEN);
+	return concat(buf,"\\");
 }
 
 //given a string, returns the minimum size string to hold source
 char * trimmed_copy(const char * source)//maybe works
 {
-	int i = 0;
-	while(source[++i]);
-	char * ret = malloc(i);
+	int i = strlen(source);
+	char *ret = malloc(i+1);
 	strncpy(ret,source,i);
-	ret[i-1] = 0;
+	ret[i] = 0;
 	return ret;
 }
 
@@ -120,23 +111,4 @@ FILE * get_open_file(char * file_name)
 	if (!fp) fp = fopen(file_name,"w+");
 
 	return fp;
-}
-
-void serialize_todos(ll_node_t todos, char* file_name)//works
-{
-	FILE *fp = fopen(file_name, "w");
-
-	if (!fp) error(concat("could not open file: ",file_name));
-
-	int i = 0;
-	while (todos.next && i < MAXTODOS)
-	{
-		fputs(todos.val,fp);
-		fputc('\n',fp);
-		todos = *(todos.next);
-		i++;
-	}
-
-	fputs(todos.val,fp);
-	fclose(fp);
 }

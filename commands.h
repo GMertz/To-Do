@@ -1,14 +1,14 @@
 #ifndef GUARD_COMMANDS_H
 #define GUARD_COMMANDS_H
 #define NUMCOMMANDS 7
-#include "ll.h"
+#include "ll.h"/*for: ll_node_t type*/
 
-int todo(ll_node_t *, char*);
-int add_todo(ll_node_t *, char*);
-int rem(ll_node_t *, char*);
-int update(ll_node_t *, char*);
-int edit(ll_node_t *, char*);
-int done(ll_node_t *, char*);
-int show(ll_node_t *, char*);
+void todo(ll_node_t *, const char* path_name);
+void add_todo(ll_node_t *, const char* path_name);
+void rem(ll_node_t *, const char* path_name);
+void update(ll_node_t *, const char* path_name);
+void edit(ll_node_t *, const char* path_name);
+void done(ll_node_t *, const char* path_name);
+void show(ll_node_t *, const char* path_name);
 
 #endif

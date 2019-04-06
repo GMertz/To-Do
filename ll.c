@@ -1,8 +1,9 @@
-#include "ll.h"/*for ll struct and methods*/
+#include "ll.h"
+
 #include "util.h"/*for: error*/
 #include <stdlib.h>/*for: malloc, free*/
-#include <string.h>/*for: strncpy*/
-#include <stdio.h>/*for: FILE */
+#include <string.h>/*for: strncpy, strcpy*/
+#include <stdio.h>/*for: FILE, printf */
 
 void print_ll(ll_node_t head)
 {
@@ -13,6 +14,7 @@ void print_ll(ll_node_t head)
 	while(head.next);
 	printf("%s\n",head.val);
 }
+
 
 void push(ll_node_t** head, const char* str)//works
 {
@@ -50,7 +52,7 @@ void add(ll_node_t* head, unsigned int ind, const char * str)//works
 	}
 }
 
-//removes and discards(frees) head of ll
+
 void remove_head(ll_node_t** head)
 {
 	if(!head) error("removal underflow");
@@ -82,6 +84,7 @@ char * rem_at(ll_node_t** head, unsigned int ind)//works
 	return val;
 }
 
+
 ll_node_t* arr_to_ll(const char** arr, int len)//works
 {
 	ll_node_t * head = new_node(arr[0]);
@@ -94,11 +97,12 @@ ll_node_t* arr_to_ll(const char** arr, int len)//works
 	return head;
 }
 
+
+
 ll_node_t* new_node(const char* val)//works
 {
 	ll_node_t * newn = malloc(sizeof(ll_node_t));
-	int len = 0;
-	while(val[len++]);
+	int len = strlen(val)+1;
 	char * copy = malloc(len);
 	strncpy(copy,val,len);
 	newn->val = copy;

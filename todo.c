@@ -1,13 +1,12 @@
 #include "todo.h"
-#include <stdio.h>
-#include <string.h>/*for:strcmp*/
-#include <stdlib.h>
+
+#include <stdio.h>/*for: fgetc, fclose*/
+#include <stdlib.h>/*for: free*/
 #include "ll.h" /*for: ll struct and methods*/
-#include "util.h" /*for:MAXLINELEN*/
-#include "commands.h" /*for:Command_Names, NUMCOMMANDS*/
+#include "util.h" /*for:MAXLINELEN, caseless_cmp, is_number, concat, error, get_open_file*/
+#include "commands.h" /*for: NUMCOMMANDS*/
 
-
-const char* Command_Names[NUMCOMMANDS] = 
+const char* COMM_NAMES[NUMCOMMANDS] = 
 {
 	"todo  \0",
 	"add   \0",
@@ -72,7 +71,7 @@ ll_node_t *get_todos(char *file_name)//works
 /*returns 1 if the string "g"/"G" is contained in arr, else 0*/
 int get_flag(ll_node_t** head)//works
 {
-	if(!strcmp((*head)->val,"G") || !strcmp((*head)->val,"g"))
+	if(caseless_cmp((*head)->val,"g"))
 	{
 		remove_head(head);
 		return GLOBAL;
@@ -84,11 +83,11 @@ int get_flag(ll_node_t** head)//works
 /*returns code for a command in args and remove_nodes the elm from args*/
 int get_command(ll_node_t** head)
 {
-	if(!head) return TODO;
+	if(!*head) return TODO;
 
 	for (int i = 0; i < NUMCOMMANDS; i++)
 	{
-		if(caseless_cmp(Command_Names[i],(*head)->val))
+		if(caseless_cmp(COMM_NAMES[i],(*head)->val))
 		{
 			remove_head(head);
 			switch(i)
@@ -117,7 +116,6 @@ int get_command(ll_node_t** head)
 /*gets the parameters for a command returns the amount of params received*/
 int get_params(ll_node_t* args, char ** str, int * num)
 {
-	//check if a given arg contains chars or nums
 	int params = 0;
 	int num_param;
 	char * build_str = 0, *temp = 0;
@@ -144,4 +142,23 @@ int get_params(ll_node_t* args, char ** str, int * num)
 		*str = build_str;
 	}
 	return params;
+}
+
+
+/*clears file at file_name, then write each todo to the file*/
+void serialize_todos(ll_node_t *todos, char* file_name)//works
+{
+	FILE *fp = fopen(file_name, "w");
+
+	if (!fp) error(concat("could not open file: ",file_name));
+	
+	int i = 0;
+	while (todos && i < MAXTODOS)
+	{
+		fputs(todos->val,fp);
+		todos = todos->next;
+		if (todos) fputc('\n',fp);
+		i++;
+	}
+	fclose(fp);
 }
