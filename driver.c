@@ -17,6 +17,7 @@ void (*const COMM[NUMCOMMANDS])(ll_node_t*, const char*) =
 
 int main(int argv, const char **argc)
 {
+	printf("%s\n",GLOBALPPATH);
 	if(argv == 1) COMM[0](0,get_local_path());
 	else
 	{
