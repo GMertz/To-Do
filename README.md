@@ -22,5 +22,16 @@ All commands can be prefaced by 'g' or 'G' to indicate the scope of the command 
 ## To use this
 1. Have gcc installed
 1. Clone repository
-2. Run: run.bat
-3. Add path to todo.exe to PATH
+2. Run: bin\setup.bat
+3. Add path to bin to PATH
+
+
+##How to add to PATH (windows 10)
+The easiest way to edit the path is to go through the windows GUI
+1. Search (windows-key + s) for: "Environment Variables"
+2. Select "Edit the system environment variables"
+3. Click "environment variables"
+4. In system variables (bottom half) select path and click "Edit..."
+5. Press New and paste the path to bin into the field
+6. Press OK, then OK, then OK
+7. You will need to restart CMD to access the changes, but now you can type "todo" from any directory while using CMD
