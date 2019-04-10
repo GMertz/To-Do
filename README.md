@@ -26,7 +26,7 @@ All commands can be prefaced by 'g' or 'G' to indicate the scope of the command 
 3. Add path to bin to PATH
 
 
-##How to add to PATH (windows 10)
+## How to add to PATH (windows 10)
 The easiest way to edit the path is to go through the windows GUI
 1. Search (windows-key + s) for: "Environment Variables"
 2. Select "Edit the system environment variables"
