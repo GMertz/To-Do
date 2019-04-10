@@ -22,7 +22,7 @@ All commands can be prefaced by 'g' or 'G' to indicate the scope of the command 
 ## To use this
 1. Have gcc installed
 1. Clone repository
-2. Run: bin\setup.bat
+2. cd into bin and run setup.bat
 3. Add path to bin to PATH
 
 
