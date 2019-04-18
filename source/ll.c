@@ -29,6 +29,8 @@ void push(ll_node_t** head, const char* str)//works
 
 void add(ll_node_t* head, unsigned int ind, const char * str)//works
 {
+	if(!head && ind) error("invalid ind for add");
+
 	ll_node_t * prev = 0;
 	ll_node_t *node = head;
 	while(ind)
@@ -37,7 +39,7 @@ void add(ll_node_t* head, unsigned int ind, const char * str)//works
 		node = node->next;
 		ind--;
 
-		if(!node && ind) error("invalid ind");
+		if(!node && ind) error("invalid ind for add");
 	}
 
 	if(prev){

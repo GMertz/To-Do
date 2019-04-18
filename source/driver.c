@@ -4,7 +4,7 @@
 #include "commands.h"/*for: todo, add_todo, rem, update, edit, done, show */
 
 
-void (*const COMM[NUMCOMMANDS])(ll_node_t*, const char*) = 
+void (*const COMM[NUMCOMMANDS])(ll_node_t * head, const char *path_name) = 
 {
 	todo,
 	add_todo,
@@ -12,7 +12,9 @@ void (*const COMM[NUMCOMMANDS])(ll_node_t*, const char*) =
 	update,
 	edit,
 	done,
-	show
+	show,
+	help,
+	swap
 };
 
 int main(int argv, const char **argc)
@@ -22,17 +24,25 @@ int main(int argv, const char **argc)
 		return 1;
 		
 	#else
-	if(argv == 1) COMM[0](0,get_local_path());
+
+		int scope, command;
+		char *path_name = 0;
+		ll_node_t* args = 0;
+
+	if (argv == 1)
+	{ 
+		scope = LOCAL;
+		command = 0;
+	}
 	else
 	{
-		ll_node_t* args = arr_to_ll(&argc[1], argv-1);
-		char* path_name;
-
-		if (get_flag(&args) == GLOBAL) path_name = concat(GLOBALPATH,"\\");
-		else path_name = get_local_path();
-
-		int command_code = get_command(&args);
-		COMM[command_code](args,path_name);
+		args = arr_to_ll(&argc[1], argv-1);
+		scope = get_flag(&args);
+		command = get_command(&args);
 	}
+
+		char *effective_path = get_effective_path(GLOBALPATH, scope);
+		COMM[command](args, effective_path);
+
 	#endif
 }

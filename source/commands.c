@@ -1,5 +1,5 @@
 #include "commands.h"
-
+#include <string.h> /*strncpy, strlen*/
 #include "ll.h"/*for: ll_node_t type and methods*/
 #include "util.h"/*for: concat, error*/
 #include "todo.h"/*for: get_todos, get_params, serialize todos*/
@@ -10,26 +10,23 @@
 	input: a linked list of args and path_name
 		reads file at path_name+.todo.txt and prints each line, numbered
 */
+
 void todo(ll_node_t * head, const char *path_name)//works
 {
-	int line_num = 0;
+	int line_num = 1;
 	ll_node_t * todos = 0;
 
-	char *file_name = concat(path_name,FILENAME);
-
-	if(todos = get_todos(file_name))
+	if ((todos = get_todos(path_name))->next)
 	{
-		while(todos)
+		todos=todos->next;
+		while (todos)
 		{
 			printf("%d) %s\n",line_num, todos->val);
 			todos = todos->next;
 			line_num++;
 		}
 	}
-	else{
-		error("No todos to print");
-	}
-
+	else error("Nothing here");
 }
 
 /*
@@ -44,25 +41,22 @@ void add_todo(ll_node_t * head, const char *path_name)
 	int ind; 
 	char *message = 0;
 
-	char *file_name = concat(path_name,FILENAME);
-
-	ll_node_t * todos = get_todos(file_name);
+	ll_node_t * todos = get_todos(path_name);
 
 	switch(get_params(head, &message, &ind))
 	{
-		case 2:
+		case P_STR:
 			push(&todos, message);
 			break;
-		case 3:
-			add(todos,ind, message);
+		case P_BOTH:
+			add(todos, ind, message);
 			break;
 		default:
 			error("nothing to add!");
 	}
 
 	printf("%s added!",message);
-
-	serialize_todos(todos, file_name);
+	serialize_todos(todos, path_name);
 }
 
 
@@ -73,24 +67,15 @@ void add_todo(ll_node_t * head, const char *path_name)
 */
 void rem(ll_node_t * head, const char *path_name)
 {
-	int ind; 
-	char *file_name = concat(path_name,FILENAME);
+	int ind, params = 0; 
 
-	ll_node_t * todos = get_todos(file_name);
+	ll_node_t * todos = get_todos(path_name);
+	if ((params = get_params(head, 0, &ind)) && ind > 0 && (params == P_NUM || params == P_BOTH)){
 
-	switch(get_params(head, 0, &ind))
-	{
-		case 1:
-			printf("%s removed!",rem_at(&todos, ind));
-			break;
-		case 3:
-			printf("%s removed!",rem_at(&todos, ind));
-			break;
-		default:
-			error("nothing to remove!");
+		printf("%s removed!",rem_at(&todos, ind));
+		serialize_todos(todos, path_name);
 	}
-	
-	serialize_todos(todos, file_name);
+	else error("nothing to remove!");
 }
 
 
@@ -104,23 +89,18 @@ void update(ll_node_t * head, const char *path_name)
 	int ind; 
 	char *message = 0;
 
-	char *file_name = concat(path_name,FILENAME);
+	ll_node_t * todos = get_todos(path_name);
 
-	ll_node_t * todos = get_todos(file_name);
-
-	switch(get_params(head, &message, &ind))
+	if (get_params(head, &message, &ind) == P_BOTH && ind != 0)
 	{
-		case 3:
-			add(todos,ind+1, message);
-			rem_at(&todos,ind);
-			break;
-		default:
-			error("nothing to update!");
+		add(todos,ind+1, message);
+		rem_at(&todos,ind);
+		
+		printf("%s updated!",message);
+		serialize_todos(todos, path_name);
+			
 	}
-
-	printf("%s updated!",message);
-
-	serialize_todos(todos, file_name);
+	else error("nothing to update!");
 }
 
 /*
@@ -128,8 +108,7 @@ void update(ll_node_t * head, const char *path_name)
 */
 void edit(ll_node_t * head, const char *path_name)
 {
-	char *file_name = concat(path_name,FILENAME);
-	system(file_name);
+	system(path_name);
 }
 
 
@@ -142,41 +121,67 @@ void edit(ll_node_t * head, const char *path_name)
 void done(ll_node_t * head, const char *path_name)
 {
 	int ind;
-
-	char *file_name = concat(path_name,FILENAME);
-	ll_node_t * todos = get_todos(file_name);
+	ll_node_t * todos = get_todos(path_name);
 
 	int num_params = get_params(head, 0, &ind);
-	if(num_params == 1 || num_params == 3)
+	if (num_params == P_NUM || num_params == P_BOTH && ind != 0)
 	{
 		char *finished = rem_at(&todos, ind);
-		FILE *fp = fopen(concat(path_name,FINISHED),"a");
+		
+		char temp[MAXPATHLEN];
+		strncpy(temp, path_name, MAXPATHLEN);
+		temp[strlen(temp)-4] = 0;
+		char *done_path = concat(temp,FINISHED,0);
 
+		FILE *fp = fopen(done_path,"a");
 		fputs(finished,fp);
 		fputc('\n',fp);
 		printf("finished: %s!",finished);
+
+		free(done_path);
+		serialize_todos(todos, path_name);
 	}
-	else
-	{
-		error("nothing to remove!");
-	}
+	else error("nothing to remove!");
 	
-	serialize_todos(todos, file_name);
+	
 }
 
 /*
 	input: a linked list of args and path_name
-		reads file at path_name+.done.txt and gathers each line into a linkedlist
+		reads file at path_name+done.txt and gathers each line into a linkedlist
 		then prints the list, numbered
 */
 void show(ll_node_t * head, const char *path_name)
 {
-	ll_node_t *todos =  get_todos(concat(path_name,FINISHED));
-	int i = 0;
-	while(todos)
+	char temp[MAXPATHLEN];
+	strncpy(temp, path_name, MAXPATHLEN);
+	temp[strlen(temp)-4] = 0;
+	char *done_path = concat(temp,FINISHED,0);
+
+	ll_node_t *todos =  get_todos(done_path);
+	int i = 1;
+	while (todos)
 	{
 		printf("%d) %s\n",i, todos->val);
 		todos = todos->next;
 		i++;
 	}
+	free(done_path);
+}
+
+
+/*
+	print a list of command descriptions
+*/
+void help(ll_node_t *head, const char* path_name)
+{
+	error("unimplemented cmd");
+}
+
+/*
+	swap the order of two todos
+*/
+void swap(ll_node_t *head, const char* path_name)
+{
+	error("unimplemented cmd");
 }
