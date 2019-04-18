@@ -142,8 +142,6 @@ void done(ll_node_t * head, const char *path_name)
 		serialize_todos(todos, path_name);
 	}
 	else error("nothing to remove!");
-	
-	
 }
 
 /*
@@ -175,7 +173,13 @@ void show(ll_node_t * head, const char *path_name)
 */
 void help(ll_node_t *head, const char* path_name)
 {
-	error("unimplemented cmd");
+	char *help_path = concat(GLOBALPATH,"..\\help.txt",'\\');
+	printf("%s\n", help_path);
+	FILE *fp = fopen(help_path, "r");
+	char c;
+
+	while ((c = fgetc(fp)) && c != '~') printf("%c",c);
+	free(help_path);
 }
 
 /*

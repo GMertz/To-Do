@@ -91,25 +91,7 @@ int get_command(ll_node_t** head)
 		if(caseless_cmp(COMM_NAMES[i],(*head)->val))
 		{
 			remove_head(head);
-			switch(i)
-			{
-				case 0:
-					return TODO;
-				case 1:
-					return ADD;
-				case 2:
-					return REMOVE;
-				case 3:
-					return UPDATE;
-				case 4:
-					return EDIT;
-				case 5:
-					return DONE;
-				case 6:
-					return SHOW;
-				default:
-					error("Match with untracked Command");
-			}
+			return i;
 		}
 	}
 	error(concat("Invalid Command entered: ",(*head)->val, 0));

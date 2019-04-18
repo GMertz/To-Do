@@ -1,0 +1,23 @@
+usage: todo [flag] [command] [params]
+
+flags and commands are case insensitive
+
+Flags set the scope of the program
+G	work with the global todo list
+L	work with the todo list for the current working directory
+
+
+Commands
+[]		no command, same as "todo"		
+todo		list todos at a given scope, this is equivalent to using no command
+add {#} ent 	add an entry at #, if no # is specified, entry is added at the end
+remove #		remove an entry at #, entry is not added to the finished list
+update # ent	replace entry at # with ent
+edit		open the todo file for editing
+done #		removes an entry at # and adds it to the finished list
+show		show finished to-dos
+help		show this help message
+swap		swap the number of two entries (not implemented)
+
+~
+
